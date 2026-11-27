@@ -2,7 +2,9 @@ export type ClassRoom = { id: string; name: string; subject: string; room: strin
 export type Subject = 'Physics' | 'Chemistry' | 'Maths' | 'Biology' | 'English'
 export type Student = { id: string; roll: number; name: string; classId: string; guardian: string; phone: string; tests: number[]; subjects: Record<Subject, number> }
 export type MaterialType = 'SCORM' | 'PDF' | 'Video' | 'Slides' | 'Link'
-export type Material = { id: string; title: string; classId: string; subject: string; type: MaterialType; description: string; size: string; file: string; visible: boolean; date: string }
+/** Result of validating a SCORM package. `pending` means validation has not finished (or never ran on an older item). */
+export type PackageInfo = { status: 'ready' | 'pending' | 'failed'; version?: string; launch?: string; files?: number; reason?: string }
+export type Material = { id: string; title: string; classId: string; subject: string; type: MaterialType; description: string; size: string; file: string; visible: boolean; date: string; package?: PackageInfo }
 export type Submission = { studentId: string; mark: number | null; at: string }
 export type Assignment = { id: string; title: string; classId: string; due: string; opens: string; maxMark: number; instructions: string; submissions: Submission[] }
 export type Question = { text: string; options: string[]; answer: number }

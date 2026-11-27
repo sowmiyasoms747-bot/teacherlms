@@ -97,12 +97,13 @@ export function Field({ label, required, hint, error, children, wide }: { label:
   )
 }
 
-export function ClassSelect({ id, value, onChange, all }: { id?: string; value: string; onChange: (v: string) => void; all?: boolean }) {
+export function ClassSelect({ id, value, onChange, all, ids }: { id?: string; value: string; onChange: (v: string) => void; all?: boolean; ids?: string[] }) {
   const db = useDB()
+  const classes = ids ? db.classes.filter(c => ids.includes(c.id)) : db.classes
   return (
     <select id={id} aria-label={id ? undefined : 'Class'} value={value} onChange={e => onChange(e.target.value)}>
       {all && <option value="all">All classes</option>}
-      {db.classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+      {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
     </select>
   )
 }

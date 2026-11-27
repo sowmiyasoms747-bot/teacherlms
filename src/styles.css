@@ -179,3 +179,8 @@ input[type=radio], input[type=checkbox] { accent-color: var(--accent); width: 17
 }
 @media (max-width: 560px) { .form, .q ol { grid-template-columns: minmax(0, 1fr) } .quick { grid-template-columns: 1fr 1fr } .item { padding-inline: 16px; gap: 11px; flex-wrap: wrap } .item .body { flex-basis: 60% } .register { grid-template-columns: 1fr 1fr } .seat { padding: 8px; gap: 6px } .seat .roll { width: 16px } .band-row { grid-template-columns: 1fr auto } .band-row .bandbar { grid-column: 1 / -1; grid-row: 2 } .item .menu-wrap { margin-left: auto } .columns .x span { font-size: .75rem } .savebar .btn { width: 100% } .savebar .tally .muted { display: none } .modal-body { padding: 16px } .page-head > .row { width: 100% } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+
+/* SCORM upload rules and staff preview */
+.rules { display: grid; gap: 8px; border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px } .rule-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 22px } .rule-list li { display: grid; gap: 1px } .rule-list .muted { font-size: .82rem } .rules code { font-size: .88em }
+.notice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 11px; background: var(--accent-soft); color: var(--ink); margin: 0 0 16px } .notice svg { color: var(--accent-ink); flex: none; margin-top: 2px }
+.player { width: 100%; height: min(72vh, 760px); border: 1px solid var(--line); border-radius: 11px; background: #fff }

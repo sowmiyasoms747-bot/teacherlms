@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Schedule from './pages/Schedule'
 import { Classes, ClassDetails } from './pages/Classes'
 import { Library, Upload } from './pages/Library'
+import { Preview } from './pages/Preview'
 import { Assignments, AssignmentDetail } from './pages/Assignments'
 import { Quizzes, QuizEditor } from './pages/Quizzes'
 import Attendance from './pages/Attendance'
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/classes/:id" element={<ClassDetails />} />
         <Route path="/library" element={<Library />} />
         <Route path="/library/upload" element={<Upload />} />
+        <Route path="/library/:id/preview" element={<Preview />} />
         <Route path="/assignments" element={<Assignments />} />
         <Route path="/assignments/:id" element={<AssignmentDetail />} />
         <Route path="/quizzes" element={<Quizzes />} />

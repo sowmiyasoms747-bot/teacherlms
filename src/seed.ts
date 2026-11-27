@@ -1,4 +1,4 @@
-import type { Chapter, ClassRoom, DB, Mark, MaterialType, Question, Student, Subject, Submission } from './types'
+import type { Chapter, ClassRoom, DB, Mark, Material, MaterialType, Question, Student, Subject, Submission } from './types'
 import { addDays, lastSchoolDays, today } from './dates'
 
 /** Sample data. Deterministic, so every fresh start looks the same. */
@@ -98,8 +98,8 @@ const XI = (n: number) => ['Units and Measurement', 'Motion in a Straight Line',
 export function seed(): DB {
   const students = makeStudents()
   const t = today()
-  const m = (id: string, title: string, classId: string, type: MaterialType, size: string, days: number, description: string, file: string, visible = true) =>
-    ({ id, title, classId, subject: 'Physics', type, size, file, description, visible, date: addDays(t, -days) })
+  const m = (id: string, title: string, classId: string, type: MaterialType, size: string, days: number, description: string, file: string, visible = true): Material =>
+    ({ id, title, classId, subject: 'Physics', type, size, file, description, visible, date: addDays(t, -days), ...(type === 'SCORM' && { package: { status: 'ready', version: 'SCORM 2004', launch: 'index_lms.html', files: 214 } }) })
   return {
     classes: structuredClone(CLASSES), students,
     materials: [
