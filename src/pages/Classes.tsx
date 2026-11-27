@@ -2,12 +2,11 @@ import { useState, type FormEvent } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowRight, CalendarCheck, ChevronDown, ClipboardList, FileText, ListChecks, Plus, Search, Send, Upload, UserPlus, Users } from 'lucide-react'
 import type { Activity, ChapterState, ClassRoom } from '../types'
-import { attendancePct, average, bands, bandOf, cls, inClass, latest, periodsOn, subjectAverages, uid, useDB, useStore } from '../store'
+import { average, bands, bandOf, cls, inClass, latest, periodsOn, subjectAverages, uid, useDB, useStore } from '../store'
 import { newStudent } from '../seed'
 import { clock, mins, now } from '../dates'
 import { nowMins } from '../store'
 import { BandBar, BandLegend, Btn, CLASS_ICON, ClassMark, Columns, Empty, Field, Menu, Modal, Page, Panel, Tabs } from '../ui'
-import { AttendanceReport } from './Attendance'
 import { AssignmentList } from './Assignments'
 import { QuizList } from './Quizzes'
 import { MaterialList } from './Library'
@@ -110,7 +109,7 @@ function AddStudent({ classId, onClose }: { classId: string; onClose: () => void
   )
 }
 
-const TABS = ['overview', 'students', 'syllabus', 'materials', 'assignments', 'quizzes', 'attendance', 'performance'] as const
+const TABS = ['overview', 'students', 'syllabus', 'materials', 'assignments', 'quizzes', 'performance'] as const
 type Tab = (typeof TABS)[number]
 const ACT: Record<Activity['kind'], typeof FileText> = { assignment: ClipboardList, material: FileText, attendance: CalendarCheck, quiz: ListChecks }
 
@@ -133,7 +132,6 @@ export function ClassDetails() {
       <header className="class-hero">
         <div className="row" style={{ gap: 16 }}><ClassMark c={c} size={60} /><div><h1>{c.name}</h1><p className="muted">{c.subject}, {c.room}. {nextLesson(db, id) === 'On now' ? 'Lesson on now.' : `Next lesson: ${nextLesson(db, id)}.`}</p></div></div>
         <Menu trigger={p => <Btn kind="primary" {...p}>Class Actions <ChevronDown size={16} style={{ verticalAlign: -3 }} aria-hidden /></Btn>} items={[
-          { label: 'Take attendance', icon: CalendarCheck, to: `/attendance?class=${id}` },
           { label: 'Upload material', icon: Upload, to: `/library/upload?class=${id}` },
           { label: 'Create assignment', icon: ClipboardList, to: `/assignments?new=1&class=${id}` },
           { label: 'Create quiz', icon: ListChecks, to: `/quizzes/new?class=${id}` },
@@ -154,27 +152,26 @@ export function ClassDetails() {
           <div className="stack">
             <Panel title="How the class is doing" action={<button className="link" type="button" onClick={() => setTab('performance')}>Performance <ArrowRight size={15} /></button>}>
               <BandBar data={bands(students)} label={c.name} /><BandLegend data={bands(students)} />
-              <p className="muted">{average(students) === null ? 'No test scores yet. ' : `Average ${average(students)}% in the latest test. `}{attendancePct(db, id) === null ? 'No registers yet.' : `${attendancePct(db, id)}% attendance over 10 school days.`}</p>
+              <p className="muted">{average(students) === null ? 'No test scores yet. ' : `Average ${average(students)}% in the latest test. `}</p>
             </Panel>
             <Panel flush title="Students to check in with"><CheckIn id={id} onPick={s => setSp({ student: s })} /></Panel>
           </div>
           <Panel flush title="Recent Activity">
-            <ul className="list">{db.activity.filter(a => a.classId === id).slice(0, 6).map(a => { const I = ACT[a.kind]; return <li key={a.id} className="item"><span className="ico" data-hue={c.hue}><I size={18} aria-hidden /></span><div className="body"><strong>{a.text}</strong><span className="muted small">{a.at}</span></div></li> })}</ul>
-            {!db.activity.some(a => a.classId === id) && <Empty icon={ListChecks} title="Nothing yet" text="Uploads, assignments and registers for this class will appear here." />}
+            <ul className="list">{db.activity.filter(a => a.classId === id && a.kind !== 'attendance').slice(0, 6).map(a => { const I = ACT[a.kind]; return <li key={a.id} className="item"><span className="ico" data-hue={c.hue}><I size={18} aria-hidden /></span><div className="body"><strong>{a.text}</strong><span className="muted small">{a.at}</span></div></li> })}</ul>
+            {!db.activity.some(a => a.classId === id && a.kind !== 'attendance') && <Empty icon={ListChecks} title="Nothing yet" text="Uploads, assignments and quizzes for this class will appear here." />}
           </Panel>
         </div>
       </>}
       {tab === 'students' && <Panel flush title={`${students.length} Students`} action={<Btn small icon={UserPlus} onClick={() => setAdding(true)}>Add student</Btn>}>
         {students.length ? <div className="scroll"><table>
-          <thead><tr><th>Roll</th><th>Student</th><th className="r">Latest test</th><th className="r">Attendance</th><th>Band</th></tr></thead>
-          <tbody>{students.map(s => { const a = attendancePct(db, id, s.id); return <tr key={s.id} className="click"><td className="num muted">{s.roll}</td><td><button type="button" className="name-btn" onClick={() => setSp({ tab: 'students', student: s.id })}>{s.name}</button></td><td className="r num">{latest(s) ?? '–'}{latest(s) !== null && '%'}</td><td className="r num">{a === null ? '–' : `${a}%`}</td><td><BandBadge s={s} /></td></tr> })}</tbody>
-        </table></div> : <Empty icon={Users} title="No students yet" text="Add students to take attendance and track progress." />}
+          <thead><tr><th>Roll</th><th>Student</th><th className="r">Latest test</th><th>Band</th></tr></thead>
+          <tbody>{students.map(s => { return <tr key={s.id} className="click"><td className="num muted">{s.roll}</td><td><button type="button" className="name-btn" onClick={() => setSp({ tab: 'students', student: s.id })}>{s.name}</button></td><td className="r num">{latest(s) ?? '–'}{latest(s) !== null && '%'}</td><td><BandBadge s={s} /></td></tr> })}</tbody>
+        </table></div> : <Empty icon={Users} title="No students yet" text="Add students to track their progress." />}
       </Panel>}
       {tab === 'syllabus' && <Syllabus id={id} />}
       {tab === 'materials' && <Panel flush title="Materials" action={<Btn small icon={Upload} to={`/library/upload?class=${id}`}>Upload material</Btn>}><MaterialList items={mats} /></Panel>}
       {tab === 'assignments' && <Panel flush title="Assignments" action={<Btn small icon={Plus} to={`/assignments?new=1&class=${id}`}>Create assignment</Btn>}><AssignmentList items={work} /></Panel>}
       {tab === 'quizzes' && <Panel flush title="Quizzes" action={<Btn small icon={Plus} to={`/quizzes/new?class=${id}`}>Create quiz</Btn>}><QuizList items={quizzes} /></Panel>}
-      {tab === 'attendance' && <><div className="row"><Btn kind="primary" icon={CalendarCheck} to={`/attendance?class=${id}`}>Open register</Btn></div><AttendanceReport classId={id} /></>}
       {tab === 'performance' && <div className="grid-even">
         <Panel title="Average by subject, latest test (%)"><Columns label={`${c.name} average by subject`} data={subjectAverages(students)} highlight={c.subject} /></Panel>
         <Panel title="Score bands"><BandBar data={bands(students)} label={c.name} /><BandLegend data={bands(students)} /><table><thead><tr><th>Band</th><th className="r">Students</th></tr></thead><tbody>{bands(students).map(b => <tr key={b.label}><td>{b.label}</td><td className="r num">{b.value}</td></tr>)}</tbody></table></Panel>
@@ -187,9 +184,9 @@ export function ClassDetails() {
 
 function CheckIn({ id, onPick }: { id: string; onPick: (s: string) => void }) {
   const db = useDB()
-  const rows = inClass(db, id).map(s => ({ s, a: attendancePct(db, id, s.id) ?? 100 })).filter(x => bandOf(x.s) === 'Needs attention' || x.a < 80).sort((x, y) => (latest(x.s) ?? 0) - (latest(y.s) ?? 0)).slice(0, 5)
-  if (!rows.length) return <p className="muted" style={{ padding: '4px 20px 14px' }}>No one is below 50% or under 80% attendance.</p>
-  return <ul className="list">{rows.map(({ s, a }) => <li key={s.id} className="item"><div className="body"><button type="button" className="name-btn" onClick={() => onPick(s.id)}>{s.name}</button><span className="muted small">Latest test {latest(s) ?? '–'}%, attendance {a}%</span></div><Btn small icon={Send} to={`/messages?new=1&to=${s.id}`}>Message</Btn></li>)}</ul>
+  const rows = inClass(db, id).filter(s => bandOf(s) === 'Needs attention').sort((x, y) => (latest(x) ?? 0) - (latest(y) ?? 0)).slice(0, 5)
+  if (!rows.length) return <p className="muted" style={{ padding: '4px 20px 14px' }}>No one is below 50% in the latest test.</p>
+  return <ul className="list">{rows.map(s => <li key={s.id} className="item"><div className="body"><button type="button" className="name-btn" onClick={() => onPick(s.id)}>{s.name}</button><span className="muted small">Latest test {latest(s) ?? '–'}%</span></div><Btn small icon={Send} to={`/messages?new=1&to=${s.id}`}>Message</Btn></li>)}</ul>
 }
 
 const STATES: { id: ChapterState; label: string }[] = [{ id: 'todo', label: 'Not started' }, { id: 'doing', label: 'In progress' }, { id: 'done', label: 'Done' }]

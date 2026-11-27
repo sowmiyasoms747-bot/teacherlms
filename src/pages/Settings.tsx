@@ -6,7 +6,6 @@ import { Btn, Confirm, Field, Page, Panel } from '../ui'
 
 const NOTIFY: { id: keyof S['notify']; label: string; text: string }[] = [
   { id: 'submissions', label: 'Work to review', text: 'When students submit assignments' },
-  { id: 'attendance', label: 'Unmarked registers', text: 'When a lesson starts without attendance' },
   { id: 'messages', label: 'New messages', text: 'From guardians and staff' },
 ]
 

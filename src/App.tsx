@@ -9,7 +9,6 @@ import { Library, Upload } from './pages/Library'
 import { Preview } from './pages/Preview'
 import { Assignments, AssignmentDetail } from './pages/Assignments'
 import { Quizzes, QuizEditor } from './pages/Quizzes'
-import Attendance from './pages/Attendance'
 import { Progress, Reports } from './pages/Insights'
 import Messages from './pages/Messages'
 import Settings from './pages/Settings'
@@ -29,7 +28,6 @@ export default function App() {
         <Route path="/assignments/:id" element={<AssignmentDetail />} />
         <Route path="/quizzes" element={<Quizzes />} />
         <Route path="/quizzes/:id" element={<QuizEditor />} />
-        <Route path="/attendance" element={<Attendance />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/messages" element={<Messages />} />

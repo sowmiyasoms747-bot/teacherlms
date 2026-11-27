@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, CalendarCheck, CalendarDays, ChartColumn, Check, ClipboardList, LayoutDashboard, Library, ListChecks, Menu as MenuIcon, MessageSquare, Plus, Search, Send, Settings, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
+import { Bell, CalendarDays, ChartColumn, Check, ClipboardList, LayoutDashboard, Library, ListChecks, Menu as MenuIcon, MessageSquare, Plus, Search, Send, Settings, TrendingUp, Upload, Users, type LucideIcon } from 'lucide-react'
 import { notices, pendingTotal, useDB, useStore } from './store'
 import { Avatar, Btn, Menu, useDismiss } from './ui'
 
@@ -92,7 +92,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         <nav className="nav"><Item to="/" end icon={LayoutDashboard} label="Dashboard" /><Item to="/schedule" icon={CalendarDays} label="Schedule" /><Item to="/messages" icon={MessageSquare} label="Messages" n={unread} /></nav>
         <nav className="nav" aria-label="Classes"><h3>Classes</h3><Item to="/classes" end icon={Users} label="My Classes" />{db.classes.map(c => <NavLink key={c.id} to={`/classes/${c.id}`} data-hue={c.hue}><i className="cdot" />{c.name}</NavLink>)}</nav>
         <nav className="nav" aria-label="Teach"><h3>Teach</h3><Item to="/library" icon={Library} label="Content Library" /><Item to="/assignments" icon={ClipboardList} label="Assignments" n={pendingTotal(db)} /><Item to="/quizzes" icon={ListChecks} label="Quizzes" /></nav>
-        <nav className="nav" aria-label="Track"><h3>Track</h3><Item to="/attendance" icon={CalendarCheck} label="Attendance" /><Item to="/progress" icon={TrendingUp} label="Student Progress" /><Item to="/reports" icon={ChartColumn} label="Reports & Analytics" /></nav>
+        <nav className="nav" aria-label="Track"><h3>Track</h3><Item to="/progress" icon={TrendingUp} label="Student Progress" /><Item to="/reports" icon={ChartColumn} label="Reports & Analytics" /></nav>
         <Link className="me" to="/settings"><Avatar name={db.settings.name} /><span className="grow"><strong className="clip" style={{ display: 'block', lineHeight: 1.25 }}>{db.settings.name}</strong><span className="s">Settings</span></span><Settings size={17} aria-hidden /></Link>
       </aside>
       {open && <div className="scrim" onClick={() => setOpen(false)} />}
@@ -110,7 +110,6 @@ export default function Shell({ children }: { children: ReactNode }) {
       <nav className="dockbar" aria-label="Quick">
         <NavLink to="/" end><LayoutDashboard size={21} />Today</NavLink>
         <NavLink to="/classes"><Users size={21} />Classes</NavLink>
-        <NavLink to="/attendance"><CalendarCheck size={21} />Register</NavLink>
         <NavLink to="/assignments"><ClipboardList size={21} />Work</NavLink>
         <NavLink to="/messages"><MessageSquare size={21} />Messages</NavLink>
       </nav>
